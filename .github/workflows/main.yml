@@ -21,10 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build React
+      - name: Build React (ignore eslint warnings on Windows)
         run: |
-          # Ignore CI warnings so build doesn't fail
-          CI=false npm run build
+          $env:CI="false"
+          npm run build
+        shell: powershell
 
       - name: Deploy to IIS
         run: |
