@@ -3,15 +3,15 @@ name: React CI/CD to IIS
 on:
   push:
     branches:
-      - main
+      - main  # Trigger on push to main branch
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted  # Uses your self-hosted runner (IIS server)
 
     steps:
-      # 1️⃣ Checkout your repo
-      - name: Checkout code
+      # 1️⃣ Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       # 2️⃣ Setup Node.js
@@ -20,9 +20,9 @@ jobs:
         with:
           node-version: '20'
 
-      # 3️⃣ Install dependencies
+      # 3️⃣ Install dependencies (ignore peer conflicts)
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       # 4️⃣ Build React app
       - name: Build React
@@ -31,7 +31,7 @@ jobs:
       # 5️⃣ Deploy to IIS
       - name: Deploy to IIS
         run: |
-          # Change this to your actual IIS folder
+          # Path to your IIS deployment folder
           $iisPath = "C:\inetpub\wwwroot\React-Sallery-Management-App"
 
           # Create folder if it doesn't exist
@@ -45,7 +45,7 @@ jobs:
           # Copy new build
           Copy-Item -Path "build\*" -Destination $iisPath -Recurse
 
-          # Restart IIS App Pool (optional)
+          # Restart IIS App Pool (optional but recommended)
           Import-Module WebAdministration
           Restart-WebAppPool -Name "DefaultAppPool"
         shell: powershell
